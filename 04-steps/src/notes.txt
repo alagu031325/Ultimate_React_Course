@@ -1,0 +1,65 @@
+Lecture:Handing Events the React way :
+--------------------------------------
+No addEventListeners because we use declarative way, we dont manually select DOM elements - we use "HTML inline event listeners" - we will directly listen for events right on the element where they occur - and specify a call back fn(fn value) that will be called later - use camelcase for property names - onMouseEnter
+
+Lecture: State in React :
+-------------------------
+To make React components interactive we need state - What if a component needs to hold its own data and need to hold over time - What if we want to make our app interactive changing the UI as a result of an action - that where we use states - 
+
+1. We use state for data that a component can hold over time - mainly for information that it needs to remember throughout the app's lifecycle  
+
+2. We think it as a memory of a component 
+
+3. examples of state are notification counts, text content of input field or active tab in tab components or contents of a shopping cart - all these states have in common is that in the application the user can change these values 
+
+4. state variable/piece of state - single variable in a component (component state)
+
+5. state(all pieces of state together) is the entire condition of a component at certain point in time 
+
+IMPORTANT - updating component state triggers React to re-render the component - it will create a new updated view for that component(Component view is nothing but the component visually rendered in the UI) - All views combined together make up the final User interface - state is how react keeps the UI in sync with the data 
+
+State gives us a way to re-render a part of the UI - update component's view and allows local variables to persist between multiple renders and re-renders
+
+Mastering state will unlock the power of React development
+
+Lecture: Creating state variable with useState - useState is a React hooks - we can only call hooks at the top level of the React component function not inside a loop or inside if statements or inside another function - update state only using the setter fn and not manually
+
+Lecture: Dont set state Manually! - We should use the functional state update way of updating the state, since that is how we can mutate the const state variable - mutating objects/state variables manually will is a bad practice - Always states are immutable and we can change only using the tools that react provide to us
+
+Lecture: The Mechanics of state - 
+-------------------------------
+In React we dont directly manipulate the DOM when we need to update the component's view - A view is updated(when the underlying state changes) by re-rendering(react calls the component function again) the entire component whenever the underlying data changes - State will not be reset - state is pre-served throughout the re-renders - 
+
+Lecture: Adding another piece of state - We can enter into JS mode only inside of any element - if we toggle the isOpen state, react still remembers the state of the step eventhough we re-rendered it multiple times - so state is like a memory of the component and it retains it although we re-render it multiple times.
+
+Lecture: React Developer Tools (Component and Profiler tabs) - Components tab shows the component tree 
+
+Lecture: Updating state based on current value of that state - It will only update the state once if we dont use a call back fn by passing the current state value - If we are not setting state on the current state then we can pass in the value as normal - then we need no call back 
+
+Lecture : More thoughts about state and state guidelines
+---------------------------------------------------------
+1. Each component has and manages its own state, no matter how many times we render the same component
+
+2. Multiple instances of the same component in one page will operate independently of the other one - and has their own state variables 
+
+3. State is isolated inside of each component - So entire UI is always the representation of all the current state in all components 
+
+4. React application is fundamentally all about changing state over time and correctly displaying the state at all times
+
+5. Declarative Approach in building UI is all about - With state, we view UI as a reflection of data changing over time - instead of viewing an UI as explicit DOM manipluations - So, we just describe that reflection of data using state, eventHandlers and JSX
+
+Practical Guidelines
+--------------------
+1. Create state variables for any data that will change at some point like let and [] and {} in JS that we mutate over the application's lifecycle.
+
+2. Whenever we want something in the component to be dynamic, we create a piece of state related to that "thing" and update the state when the "thing" should change, Eg: modal window can be keep tracked(whether it is open or close) with the help of a state variable isOpen
+
+3. If we want to change the way a component looks like or the data it displays we update its state, we usually do this inside event handler fns
+
+4. Whenever building a component, we should imagine the component's view (component rendered on the screen) as a reflection of state changing over time.
+
+5. Use a regular variable(defined with const) for data that should not trigger component re-rendering - dont use state
+
+Lecture : The children prop:
+----------------------------
+Making a reusable button - instead of next and previous - children props (children is the predefined keyword in react to destructure the children property inside props) is a property that each react component automatically receives, the value is exactly the same as found between the opening and closing tags - this can be any JSX the component receives as a children- we can write any JSX inside other React elements - this allows to pass JSX into an React element like any other props - essential tool to build reusable and configurable components especially when it comes to the content of the component - This really useful for building generic components that dont know their content before being used 

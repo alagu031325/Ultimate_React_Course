@@ -1,0 +1,181 @@
+Lecture: What is React components, Instances and Elements 
+---------------------------------------------------------
+Component - Describes a piece of UI - It is a regular JS functions that returns React elements/React Element Tree - usually write this using JSX syntax - Generic description of the UI like a blueprint or a template - Out of this one blueprint the react then generates one or multiple react component instances - 
+
+These instances are created whenever we 'use' the component somewhere in the code - So Instance is a 'physical' manifestation of a component living in the component tree - where component itself is just really a function that is being called while creating component instances - Each instance owns its own state and props - and has its own lifecycle (born, live and die) - Each of the component instances returns one or more react elements 
+
+Behind the scenes JSX is converted into React.createElement() function calls, result of using these components in our code would be an React Element - It is basically an immutable JS object that react keeps in memory - React Element basically contains all the information necessary to create the DOM Elements for the current component instance - and these react elements are then converted to actual DOM element (HTML) - painted on to the screen by the browser - So DOM elements are actual visual representation of the component instance in the browser - React elements just live inside the react app - React element is of type 'symbol' which is one of the JS primitives - which cant be transmitted via JSON - cant be returned from an API call - helps to protect us from cross site scripting attack, if any fake react element is returned from an API, react app will not include it 
+
+Lecture: How rendering works: Behind the scenes - 
+-------------------------------------------------
+Overview: How components are displayed on the screen:
+-----------------------------------------------------
+When a state is updated somewhere in the application - a new render is triggered - Next phase is render phase - React calls component functions and figures out how DOM should be updated to reflect the state changes - In React, rendering is NOT updating the DOM or displaying the elements on the screen - Rendering only happens internally inside React and it does not produce visual changes - In commit phase react actually writes to the DOM, updating, inserting, and deleting elements - Then the browser repaints the screen each time the DOM is updated.
+
+Two situations that triggers Rendering :
+----------------------------------------
+1. Initial render of the application 
+2. State update happending in one or more component instances (Re-renders)
+
+The render process is triggered for the entire application but not for one single component - but that doesnt mean that the entire DOM is updated - we call the component function and figure out what needs to be changed in the DOM later
+
+Renders are not triggered immediately, but scheduled for when the JS Engine has some 'free time'. There is also situation where multiple setState calls in same fn where renders will be batched
+
+Render phase in React:
+----------------------
+React will look into the entire component tree take all the component instances that triggered re-render and actually render them (simply call the corresponding component functions) - this will create updated React elements - which is so called virtual DOM 
+
+In initial render - React will take the entire component tree and transform into one big react element tree - This is called virtual DOM - is a tree of all React elements created from all component instances in the component tree - It is cheap and fast to create react element trees - Because it is just a JS object
+
+If there is a state update in any one of the components in the component tree - Then react calls the function of that component again and place the new react element in a new react element tree - Rendering a component will cause all of its child components to be rendered as well all the way down to the component tree (no matter if the props changed or not), that is if we update the top most component then the entire application will be re-rendered as well - React uses this stratergy because it doesnt know whether an update will affect the children component or not - This doesnt mean that the entire DOM is updated just the virtual DOM ( React element tree is re-created)
+
+New virtual DOM that was created after the state update, will under go 'Reconciliation' with so called current fiber tree(before state update) - This is done in React Reconciler called Fiber - The result of this process is the updated Fiber tree - A tree that will be used to write to the DOM 
+
+Reconciliation:
+---------------
+We shouldnt update the entire DOM whenever state changes somewhere in the app - because that would be inefficient - writing to the real DOM is relatively slower process - and usually when the state changes somewhere in the app only a small part of the DOM needs to be updated/created and rest of the DOM that already exists can be reused - React trys to reuses as much of the existing DOM as possible - this possible by Reconciliation.
+
+It is a process of deciding which DOM elements actually need to be inserted,deleted or updated in order to reflect the latest state changes - So result of this process is a list of DOM operations that are necessary to update the current DOM with the new state - It is processed by the Reconciler - and this is the heart (Engine) of React - It is this Reconciler that doesnt allow to touch the DOM directly instead tells React what the next snapshot of the UI should look like based on current state and the current Reconciler in React is called Fiber 
+
+During the inital rendering of the application the Fiber takes the entire React Element tree(virtual DOM) - and based on it builds yet another tree called Fiber tree - special internal tree, where for each component instance and DOM element in the app there is one so called 'fiber' - Unlike react elements in the virtual DOM - fibers are not re-created on every render - It is never destroyed - it is a immutable datastructure and once it has been created during the initial render - it is mutated over and over again in furture Reconciliation steps so this makes fiber a perfect place to keep track of current component state, props, side effects and list of used hooks and more. The actual state and props of any component instance that we see on the screen are internally stored inside the corresponding fiber in fiber tree 
+
+Each fiber also contains queue of works to do like updating state, updating ref, running registered side-effects performing DOM updates and many more - So fiber is also defined as a unit of work - The elements in fiber tree are arranged in different manner (rather than the parent child relationship that exists in React element tree). Each first child has a link to its parent and all the other children then have a link to their previous sibling - and this kind of structure is called a linked list - and this makes it easier for React to process the work with each fiber. 
+
+Both the tree includes not just React elements or components but also regular DOM elements - such as h3 or button elements - So both tress are complete representation of entire DOM structure. One important characteristic of Fiber Reconciler is that work can be performed Asynchronously - this means that the rendering process in the Reconciler can be split into chunks, tasks can be prioritized and work can be paused, reused or thrown away if not valid. Practical uses of this Asynchronous rendering because it enables modern concurrent features like Suspense or transitions starting from React 18. It also allows the rendering process to pause and resume later so that it wont block the browsers's JS Engine with too long renders - which can be problematic for performance in large applications- this is only possible because the render phase doesnt produce any visible output in the DOM yet. 
+
+Reconciliation in action:
+-------------------------
+Whenever Reconciliation needs to happen the fiber walks through the entire new virtual DOM tree step by step - and analysis exactly what needs to be changed between the current fiber tree and the update fiber tree (also known as workInProgress tree - it has new works related to DOM mutations) - and this process of comparing elements step by step based on their position in the tree is called diffing - Once this process is over all these DOM mutations - will be placed into a list called list of effects - which will be used in the next phase called 'commit' phase to actually mutate the DOM.
+
+Commit phase in React:
+----------------------
+Current work in progress fiber tree and list of DOM updates goes into the commit phase and React finally writes to the DOM - It flushes the list of DOM updates to the DOM as insertions,deletions and updates to DOM elements
+
+Commit is synchronous - writing to DOM happens in one go, it cant be interrupted. It is necessary so that the DOM never shows partial results, ensuring a consistent UI(in sync with state at all times).
+
+After this commit phase, the work in progress fiber tree becomes the current tree for the next render cycle - fiber trees are reused - they are never discarded or recreated to save the rendering time - updated DOM are then rendered by browser as updated UI on the screen 
+
+React in itself doesnt touch the DOM, it only does render phase and isnt aware where the render phase results will go - this is because React was designed to be used independently from the platform where elements will actually been shown - as a result React can be used on different platforms - React can be used with other hosts as well - we can actually build native mobile applications for iOS and android using React native - We can also build videos with React using a package called Remotion - we can also create figma, word or pdf documents with differenct so called React renderers - they dont actually render into screen but they commit the result of render phase in React like ReactDOM which is used to commit the result (that is writing to DOM) - in all these cases the result of render phase is not just a list of DOM updates but a list of updates of whatever elements are used in the host that is being used - DOM is just one of many hosts to which React apps can be committed(to which they can be outputted)
+
+Lecture: How Diffing algorithm actually works:
+----------------------------------------------
+Diffing is comparing elements step by step between two renders based on their position in the tree so only 2 scenario has to be considered, 'same position , different elements' and 'same position, same element'
+
+Diffing uses 2 fundamental assumptions (rules):
+1. Two elements of different types will produce different trees
+2. Elements with a stable 'key' props stay the same across renders
+
+1st scenario: same position and different elements:
+---------------------------------------------------
+At some point the application is re-rendered - and in diffing process it finds that an DOM element has changed in certain position of the tree - it means that only the type of element has changed from 'div' to 'header' like this - then react assumes the entire sub-tree is no longer valid - so all these elements will be destroyed n removed from DOM including their states - so entire tree is rebuilt even if children stayed the same and this reset the state (1st fundamental assumption) - Everything works the same for even the React element change at a certain position 
+
+2nd scenario: In between two renders exact same element at the same position:
+-----------------------------------------------------------------------------
+If after a render an element at a certain position in the tree is the same as before the elements will simply be kept in the DOM and that includes all child elements including the component states - it works like this for both DOM and React elements as well - if only the className attributes or prop values change, the diffing algorithm simply mutate the DOM elements attributes and in case of React elements it will pass in the new props - React trys to be as efficient as possible so the DOM element in itself stays the same - if sometimes we dont want this standard behavior and we want to create brand new component instance with new state then we can use the 'key' prop
+
+Lecture: Key prop:
+------------------
+Key prop is a special prop that we use to tell the diffing algorithm that an element is unique and this works for both DOM and React elements - So in practice we can give each component instance unique identification which will allow react to distinguish between multiple instances of the same component type
+
+Whenever an element has a stable key (key that stays the same across renders)(diffing algorithm 2nd assumption) - the element will be kept in the DOM (even if the position in the tree of that element changes) - this is why we use keys in lists
+
+When a key changes between renders, the element will be destroyed and a new one will be created(even if the position of that element in the tree is the same as before)- using this feature we can reset state 
+
+Keys in Lists(Stable Key):
+--------------------------
+If we add a new element to a list in the first position then all other list elements are moved down, so according to diffing algorithm, same elements but different position in the tree so all elements will be removed and destroyed even though they didnt change, in the DOM ( this bad for performance) - With keys we can uniquely identify an element - so we can give React that information and now when we add a new item to the top of the list then the two original elements are of course still in different positions of the tree but they do have a stable key(key that stays the same across renders) - so according to diffing rules these two elements will now be kept in the DOM - so always use keys in list
+
+Key prop to RESET state(changing key):
+--------------------------------------
+By giving a different key value for an element we tell react that this is a different component instance and existing instance along with its state has to be removed and recreat a brand new DOM element - result of this will be that the state will be reset - the element whose keys changes across renders will be recreated in the DOM
+
+Lecture: Rules for Render Logic:
+--------------------------------
+Two types of Logic in React Components:
+---------------------------------------
+1. Render Logic - Code at the top level of Component function and participates in describing how the component view looks like - like the JSX return statements and state definitions - Basically render logic is all the code that is executed as soon as the component is rendered 
+
+2. Event Handler Functions - They are pieces of code executed as a consequence of the event that the handler is listening for - They contain code that actually does things - like update state, perform an HTTP request, read an input field, navigate to another page etc - all that manipulates the application in some way 
+
+React expects the component to be pure when it comes to render logic 
+
+Functional Programming Principles Refresher - Side effects - whenever a function modifies any data that is outside of its scope - examples are mutating outside object, http request, writing to the DOM,  setting timers and more 
+
+Pure functions are basically functions without side effects - So they dont change any variable outside its scope - When we give pure function the same input it will always returns the same output
+
+Impure functions are those if we even give the same input the output will always be different, example using date strings in output which changes each second - or functions that create side effects
+
+Side effects are not bad! in themselves - Any program will be useful if it has some interactions with the outside world at some point 
+
+But to create bugfree applications we need to know when and how to create side effects - So essentially we should only follow one big rule -
+
+'Components must be pure when it comes to render logic' - Given the same props a component instance should always return the same JSX(output) - This means Render Logic is not allowed to produce any side effects - no interaction with the outside world is allowed. So it cant perform network requests, cant start timers, cant directly use the DOM API - It shouldnt mutate objects/variables outside of the function scope - This is why we cant mutate props - doing so will produce side effects and these are not allowed in render logic - And we cant update state or refs in render logic - this will create an infinite loop!!
+
+Creating random numbers are also clearly interactions with the outside world but they dont seem to do any harm so we can continue using them 
+
+Side effects are allowed and encouraged to be used in event handler functions! - If we need to create side effects as soon as the component function is first executed - we can register that side effects using a special hooks called useEffect 
+
+Lecture: State update Batching:
+-------------------------------
+Renders are not triggered immediately, but scheduled for when the JS Engine has free time. There is also batching of multiple setState calls in event handlers - If there are multiple pieces of state in the same event handler function then react batches these state updates into just one state update for the entire event handler - updating multiple pieces of state wont immediately cause a re-render - instead all pieces of state inside the event handler(State updates belong together) are updated in one go(one render and one commit) - better for performance - This might at times lead to stale state (no longer fresh and updated in the Fiber tree since re-render has not yet happended yet) - updating state in React is Asynchronous - since state variables are not immediately updated after the setState call but only after the re-render happens - This also applies when only one state variable is updated 
+
+If we need to update the state based on the previous state update, we use setState with callback function - Before React 18, react did automatic batching only in event handler functions - But not in situations that happens after a browser event has happended - But there are situations where we need to update state long after a browser event has happened like resetting the state after a timeout or after fetching data using promises - In React 17 the state updates in these cases would not be batched, it updates state varibale one by one - another case is handling native events using DOM methods such as addEventListeners where state updates are not used to be batched - but in React 18 they are batched in these situations also
+
+We can opt out of automatic batching by wrapping the state update in ReactDOM.flushSync() method - but we will never need this most of the time
+
+Lecture: How events work in React 
+---------------------------------
+DOM refresher - Event Propagation and Event Delegation
+-------------------------------------------------------
+When a click happens on the button - a new Event object will be created - but it will not be created where the click actually happened - instead the object will be created at the root of the document and from there the event will then travel down the entire DOM tree in so called capturing phase until it reaches the target element - at the target we can chose to handle the event by placeing an event handler function and after that the event object travels all the way up to the top of the tree during so called bubbling phase 
+
+By default, event handlers listen to events on the target and during the bubbling phase - so every single event handler in the parent element will also be executed during the bubbling phase as long as it is also listening to the same type of event - We can prevent the event bubbling up simply by calling stopPropagation method on the event object
+
+Event Delegation - 
+-----------------
+The fact that event bubbles like this allows developers to implement a very common and useful technique called event delegation - we can handle events for multiple elements in one of the common first parent element - This is often used in vanilla JS
+
+How React Handles events - 
+-------------------------
+React registers all event handler functions on the root DOM container(is simply the DOM element in which the react app is displayed). This is where all events are handled. React registers one event handler function per event type and it does so at the root node of the fiber tree during the render face so if we have multiple onClick handler in our code, react will bundle them all together and just add one big onClick handler to the root node of the fiber tree - Behind the scenes, React performs event delegation for all events in our applications (delegate all events to root DOM container because that is where they will get handled not in the place where events are registered). This happens in the DOM tree. 
+
+Synthetic Events:
+-----------------
+Event handler function has access to the event object that was created - but in React the event object is different than the one in Vanilla JS - In JS we get access to native DOM event (MouseEvent) - But React gives us something called Synthetic Event which is basically a wrapper around the DOM's native event object - they are very similar to native event object but they add or change some functionalities on top of them - These synthetic events has the same interface as native event objects, like stopPropagation() and preventDefault() , what special about synthetic events though is the fact that they fix some browser inconsistencies - making it so that events work in the exact same way in all browsers - and of the most important synthetic events actually bubble - including focus, blur and change event (which usually dont bubble in JS) except for scroll.
+
+In React attributes for event handlers are named using camelCase(onClick) - In vanilla JS whenever we want to stop the default behavior of the browser in response to an event we can return 'false' from the event handler function - In React this wont work - we should use preventDefault to prevent default behavior on the synthetic event object - To handle an event in the capturing phase we can simply attach 'Capture' to the event handler name like 'onClickCapture' - but we wont use this often 
+
+Library vs Frameworks:
+----------------------
+Angular, Vue is all in one kit(Framework) for web development whereas React(Library) gives freedom of choice when building a web app - A Framework is a complete structure that includes everything that we need in order to build a complete large scale application - Angular includes stuffs like routing, HTTP requests, styling, Form management - Now the downside of this is that we are struck with the framework tools in convention even if we dont like to use them - However this is not always bad 
+
+On the other hand we have JS libraries - which developers share for other developers to use - prime example is react - React is a view library - because it draws component on user interface - If we want to build large scale single page applications - then we need to include many external third party libraries - for things like Routing, styling, HTTP requests and so on - Being able to chose multiple libraries in order to build our application offers us incredible freedom because we can choose exactly the one which we like the most - and every app has different requirements and we can chose different combination of libraries for different apps - So as a React developer we need to stay up-to-date with multiple external libraries - and then need to learn how to use these libraries
+
+React 3rd party Library Ecosystem:
+----------------------------------
+Library options for different React application needs:
+------------------------------------------------------
+1. Routing (for SPAs) - React Router / React Location
+2. Http requests - JS fetch / AXIOS
+3. Remote state management - React Query / SWR / APOLLO
+4. Global state management - Context API / Redux 
+5. Styling - CSS modules / tailwindcss / inline styles of components
+6. Form management - React Hook Form / FORMIK
+7. Animations/transitions - Motion / react-spring 
+8. UI components - Material UI / Chakra / Mantine
+
+Frameworks built on top of React - Next JS / Remix (Extends React functionalities)
+----------------------------------------------------------------------------------
+Projects can be developed much easier and faster - they offload much of the set up work - they offer many other features such as SSR (server-side rendering), static site generation, better developer experience etc
+
+Lecture : Practical implications summary 
+----------------------------------------
+Never declare a new component inside another component! React sees the nested component as new, and re-creates it each time the parent component is re-rendered. Always should write new components at the top level of the file. 
+
+Only place where side effects are allowed is inside the event handlers and useEffect 
+
+Commit phase is done by the renderer called ReactDOM - so React can be used on different platforms with different renderers
+
+Multiple related state updates will only create one re-render - and great for performance
+
+

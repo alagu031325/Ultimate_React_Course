@@ -1,0 +1,115 @@
+Lecture : First App with Vite:
+------------------------------
+npm create vite@4 and give the project name and choose the framework and the variant and create it
+
+then install the npm modules with command npm i 
+
+then to start the project use npm run dev - to start vite - the index file here is main.jsx - it it just a JS file but vite needs jsx extension to identify it as a react project
+
+VITE - we need to install the developer tools that we need (in current versions it comes with ESLint) - like ESLint - config ESLint in the VITE Project - to do so we need to install 3 npm packages and save them as dev dependencies
+
+npm install eslint vite-plugin-eslint eslint-config-react-app --save-dev
+
+Lecture: Routing and Single Page Applications(SPAS)
+---------------------------------------------------
+When we use Routing with web applications we match different URLs to different UI views in UI (React components): we call each of these matches as routes - when one of those specific URLs is visited, corresponding react component is rendered 
+
+Eg: root URL (/), /login, /app - 3 routes - This enables users to navigate between different application screens simply by using the browser URL - It also keeps the UI in sync with current browser URL
+
+This Routing only works on user's browser(client-side routing) - it relies on third party packages for many different functionality and Routing is one of them 
+
+In React routing is usually handled by the third party package called React Router and this is the most used React third party library - because Routing is fundamental to building single page applications.
+
+Single-Page Applications:
+-------------------------
+Are web applications that are executed entirely on the client browsers. They rely heavily on the concept of routes where different URLs correspond to different views(components).
+
+When user clicks the routing link in web browser - the URL is changed by the react-route package which will then result in updating the DOM - The page is updated by the JavaScript(React) so the page is never completely reloaded - React component corresponding to the new URL is rendered by React and React Router - The entire app in just one page - no hard reloads - this makes the web application feels like native desktop or mobile application which is really fantastic user experience to seamlessly transition between pages - If any additional external data needed the component itself can load it from a web API by communicating with external servers. But we can load completely new page.
+
+React Router:
+-------------
+Then we need to install react router using the below command - 
+npm i react-router-dom@6
+
+Since React Router version 6.4 - there are 2 big ways of defining routes in the code - We are going to use the traditional approach by defining our routes in a Declarative way - Basically we will use couple of special components that react router gives us to define our routes right in the JSX.
+
+NOTE:{/* <div>
+      // This when added to app component render logic, will always stay on every page and react routers choose one among the different routes to display based on URL - but usually app component will just decide which page to be displayed on UI based on the URL 
+  <h1>React Routers!</h1> </div>*/}
+
+Lecture: Linking between routes with <Link/> and <NavLink/>
+-----------------------------------------------------------
+We use these to turn our applications into single page applications - to avoid hard refreshes of the page but instead we need to seamlessly move from one page to the other simply by replacing the DOM content here on our page. 
+
+NavLink will add a class 'active' to the currently selected link which can then be used to style the link in class
+
+Lecture: Styling Options for React Applications:
+------------------------------------------------
+React doesnt care about how we style our web applications - so we have lots of different styling options provided by 3rd party libraries
+
+1. Apply inline CSS to JSX elements using style prop - this is most common in react because of react's idea of separation of concerns. Inline style is scoped to a particular JSX element that it is applied to - which means it is locally scoped- it applies to only that exact element
+
+2. External CSS or Sass file - simply apply the CSS classes using className prop - Our styles are globally scoped - Every single JSX element in our entire application could use any of these classes in the external css file - This can create huge problems specially in big projects because we wont know which components are using which classes and when we update one of the classes in the CSS file it might affect other components using that class also, if a developer adds a new class with already existing class name that will create clashes between those 2 classes - so global css is not advisable in large applications. [Some CSS that are really needed to be global are like doing global reset or setting some font properties on body ]
+
+3. CSS Modules - are pretty similar to regular css files - with a difference that we write one css file for each of our components - the styles in that file will only be scoped to that component so that no other component can use them and this makes the component way more modular and reusable and better reflects react's separation of concerns
+
+4. CSS-in-JS library liked styled components - We actually write our CSS inside a JS file - that is in the same file where we define our components. It allows us to create React Components that have our styles directly applied to them, which we can then use just like regular components, so this fully embraces the React philosophy that a component should contain all the information about its appearance, and so that includes CSS. 
+
+5. Finally we can also use utility-first CSS Framework like tailwindcss, which is getting more popular. So in tailwind, we can use predefined utility classes to define individual styles, to use flexbox, to make layouts responsive, to make hover effects, and really to design our entire UI and all that without ever having to leave the JSX markup.
+
+NOTE: we can also build our entire project with any one of the fully fledged UI component library such as Material UI, Chakra UI or Mantine etc, No CSS needed to style . So essentially, a component library like those contain all kinds of prebuilt and pre-styled components that are common in most web applications.
+
+Lecture: Nested Routes and Index Route:
+---------------------------------------
+We need nested routes when we want a part of the UI to be controlled by a part of the URL - This will be very similar to implementing a tab's component but implemented using React routers instead of useState hook (to manage currently active tab)- With react routers we do the same thing but in a very different way so instead of using a useState hook to manage state we allow react router and the URL to store that state of the active tab - react router is a whole new way of thinking how we build an application
+
+Lecture: URL for state management:
+----------------------------------
+The URL is also an excellent place to store UI state (state that affects what an UI look like - like open or close panel or currently applied filter or list sorting order or currently selected list item) and serves an alternative to useState in some situations!
+
+1. It is an easy way to store state in a global place that is accessible to all components in the app - This will avoid prop drilling and we can easily read the value from the URL where ever the component is in the component tree. So we can move some state management from the React to URL.
+
+2. Also placing state in the URL is in many situations is a good way to pass data from one page into the next page without having to store that data in some temporary place inside the app.
+
+3. Doing so makes it possible to bookmark or to share the page with the exact UI state that the page has at the time of sharing or bookmarking it. It enables great user experience.
+
+/app/cities - this 'path' corresponds to the component that is being displayed
+
+To store state in the URL we use 'Params' or 'Query string' - Parameters are very useful to pass data to the next page, while the query string is useful to store some global state that should be accessible everywhere. We can leverage the power of URL to manage state in an effective way by reading the city name and gps location of that city from the URL instead of application state!
+
+Lecture: Dynamic Routes with URL Parameters:
+--------------------------------------------
+To use params with React Routers, we first need to create a new Route, Link to that route and in that route we read the state from the URL 
+
+Lecture: Reading and Setting a Query String:
+--------------------------------------------
+Add query string(by specifying the name of the state variable that we want to share along with its data) directly to the path that the user will be redirected to when clicking on any Link - so this data can be accessed from every where(global state)
+
+Lecture: Programmatic Navigation with useNavigate:
+--------------------------------------------------
+Programmatic Navigation basically means to move to a new URL without having the user click on any link and a common use case of this behavior is right after submitting the form we may need to redirect the user automatically
+
+Declarative way of doing that is the Navigate component:
+--------------------------------------------------------
+With the Navigate component we basically declare that we want to navigate to the other URL
+
+Lecture - Including a Map with the Leaflet Library:
+---------------------------------------------------
+To install react leaflet and the base library leaflet use the following command 
+
+npm i react-leaflet leaflet
+
+Lecture: Advanced State Management System: Context + useReducer:
+----------------------------------------------------------------
+While passing value into context when working with async data and useReducer hook we can have 2 options:
+
+1. to pass in all the state and dispatch function into the value  - then we can use dispatch function inside the component to update state - event handlers will be defined inside the component itself and we need to pass the state varibles needed for data fetching logic - best to follow if not dealing with any async data 
+
+2. We will not pass dispatch function into the context but use it inside the event handler functions defined within the context and these event handler functions are passed into the context 
+
+
+
+
+
+
+

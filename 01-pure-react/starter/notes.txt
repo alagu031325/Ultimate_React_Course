@@ -1,0 +1,59 @@
+Lecture - Why do Front end Frameworks exist?
+
+Server-side Rendering(Old way):
+
+Websites rendered on server - website is assembled on the web server based on data and templates - Then the html,css and js is sent to the client web browser that requested the page - and browser renders it on the screen - typical example is the websites built with WordPress - JQuery library was used to make JS work the same across all browsers
+
+SPA:
+
+At certain point developers started to write more and more JS code which needs to be executed in the browser which led to Single Page Applications(SPA) - web pages that are rendered on client and not from the server are called web applications (SPA) - it still needs data that comes from backend application through APIs - The application consumes the data and renders the screen for each view of the application - feel like using native desktop or mobile application - with out page reload we can click on links and submit forms 
+
+SPA With Vanilla JS:
+
+Any web application receives data - changes data as user uses the app and always displays the current data on the screen - so the most important task of any web application is to keep UI in sync with data (UI also displays the current state of the data) 
+
+In air bnb like applications there is huge amount of data that needs to be in sync with the UI (each piece of data is equal to piece of state) - this would be virtually impossible with just vanilla JS
+
+There are several problems to build Vanilla JS with large page applications:
+1. requires lots of DOM traversing and manipulation
+2. Data/state is usually stored in DOM - shared across entire app rather than in a central place in the application - results in many parts of the app accessing and changing the DOM state directly - which makes the code even harder to understand and it might introduce bugs
+
+So, Front end frameworks exists to keep the UI in sync with data which is really hard and a lot of work too and they also enforce a correct way of structuring and writing code - so these conventions help to build better applications - and give consistent way of building front end applications
+
+Lecture - React vs Vanilla JS - helps to reduce unnecessary code to maintain the data sync between the state variables and UI 
+
+Lecture - What is React - 
+
+1. JS Library for building UI - React is a library and is only the view layer - we need to add multiple external libraries to build a complete application - There are multiple frameworks developed on top of react - Next.js, Remix with functionalities that the react is missing
+
+2. Component based - Components(buttons, input fields, search bars) are building blocks of UI in React - it takes multiple components and draws on a web page - builds and combines multiple components - we can reuse components by adjusting the data - so each component should have all the info about how it looks like 
+
+3. Declarative - To describe how components look like and how they work we use special Declarative(telling the react what a component should look like based on current data/state) syntax called JSX - It is a huge abstraction away from the DOM - we never touch the DOM - we simply say react what to happen when state/data changes but not how it should happen - so JSX combines HTML CSS Javascript as well as other react components
+
+3. State-driven - state is data - so react renders a state using components written with JSX - then based on some event ( like button clicks ) the state might change - we update the state manually and react automatically re-renders it in the UI - So, React reacts to state changes by re-rendering the UI
+
+4. We can integrate countless - gigantic third-party libraries with react 
+
+Lecture - Two options for setting up React project - 
+
+1. Create-React-App Tool - starter kit for react applications - common development tools are already preconfigured specifically for react like ESLint, WebPack for module bundling, Web server and testing library like JEST and Babel - but developed many years back and uses outdated technologies - but can use for small learning projects
+
+2. VITE - used to build modern real-world apps - is a modern build tool - that has starter templates to set up brand new react apps - and we need to manually set up many development tools like Testing library, ESLint and so on - but still we use it because it is extremely fast to automatically refresh the page when the code changes - fast Hot module replacement and fast bundling 
+
+React frameworks like NEXT.js can help in routing, data fetching and generating html/server side rendering, things that react doesnt support - built on top of react library and use to build react web applications 
+
+VANILLA REACT apps has still important place too
+
+Lecture : Setting up project with Create-React-App
+
+command - "npx create-react-app@5 pizza-menu" - it is a regular npm project which we can also manually create - under node modules react packages are installed from npm
+
+and execute "npm start" - will start a web server and host our app on top - we will get hot module replacement - update automatically
+
+
+
+
+
+
+
+

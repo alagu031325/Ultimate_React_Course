@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello React!</title>
+</head>
+<body>
+    <!-- Application will be rendered within this div -->
+    <div id="root"></div>
+
+    <!-- Pure react - add react library (core and dom) as a script -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script> 
+    <!-- we need react dom to render react components in web browser but we can 
+    also render react in other environments like native apps using react native -->
+    <!-- JS -->
+    <script>
+        // Component is just a function whose name starts with Uppercase letter
+        function App(){
+            //return what we want to see in the UI - but here we cant return JSX code(because we dont have the tooling to convert JSX to JS function)
+            // const localTime = new Date().toLocaleTimeString()
+            //to update time in UI use state - default value passed in
+            const [time,setTime] = React.useState(new Date().toLocaleTimeString());
+
+            //update time every 1 sec
+            React.useEffect(function(){
+                //timer to update the "time" state
+                /* setInterval(function(){
+                    setTime(new Date().toLocaleTimeString())
+                },1000) */ //1sec
+            },[]);
+
+            //first argument - name of the element
+            //second - props
+            //third - children of this element
+            return React.createElement("header",null, `Hello React !! It's ${time}`);
+        }
+
+        //render component on UI - select element which should be the root
+        const root = ReactDOM.createRoot(document.getElementById("root"));
+        //Create new element out of the app component
+        root.render(React.createElement(App));
+    </script>
+</body>
+</html>

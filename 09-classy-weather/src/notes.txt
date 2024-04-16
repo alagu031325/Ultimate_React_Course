@@ -1,0 +1,14 @@
+Lecture: Class components vs Function Components:
+------------------------------------------------
+Function components - v16.8 (released with hooks - 2019) - before that function components were very limited and not very useful since we cant use hooks - To create function components we can use any type of JS function - we can use useState() to setState and simply destructure and use the received props - We use useEffect() hook to synchronize the component with external system/side effect and used to execute code at different points of component lifecycle - we handle events with functions that we define inside the components function body - In function components we return the JSX from the function 
+
+Class Components - legacy code bases - from v0.13(2015) - To create class components we need to create ES6 class that extends the provided React.Component parent class - We use OOPs concepts, having to use 'this' keyword to read incoming props (this.props.X) and to set local Component state (this.setState). In class components we have special methods that are defined by react in order to run code at different points of the component lifecycle called lifecycle methods - In class components we have to create new class method for every single event handler - In class components we need to return JSX from a special render method - lifecycle methods with explicit names can be easier to understand for beginners
+
+Hooks are the BIG difference between the function and class components - hooks introduced a completely new way of thinking and writing react applications - easier to build and produce cleaner code(since useEffect combines all lifecycle related code in a single place) - easier to share stateful logic by creating custom hooks
+
+Lecture: Lifecycle Methods:
+--------------------------
+Lifecycle methods are special methods that all React components get access to and which we can use to run side effects at different points of the component's Lifecycle(mounting, re-rendering and unmounting of the components).
+
+
+

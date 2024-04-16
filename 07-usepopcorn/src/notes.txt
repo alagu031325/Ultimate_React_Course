@@ -1,0 +1,263 @@
+Lecture: How to split a UI into components:
+-------------------------------------------
+Problems:
+---------
+If a component has too many responsibilities we should break it up into multiple 
+ - just like JS functions - We should also split parent components when it receives too many props in order to work correctly - These huge components and many props make a component hard to reuse - Huge components will have lot of complex code difficult to understand 
+
+Creating too many mini-components are also not advisable - this will make the codebase super confusing to navigate and understand, way too abstracted (creating something new to hide the implementation details of that thing) - for example, when we create a Button component the user doesnt know how the particular component works since the implementation details are hidden behind this abstraction - In a way each now component we create is an abstraction. 
+
+Ideal is to create components at the right balance between being too specific and too broad - (that is between being too small and too big )
+
+Splitting:
+----------
+We need have logical separation of contents into different components - Some small components are even reusable - and each of the component should have well defined responsibility - and of low complexity 
+
+4 Criteria for splitting a UI into components :
+-----------------------------------------------
+1. Should create logical separation of the content/layout of the page 
+2. These components must be designed to be reused
+3. Each component must have single well defined responsibilities/complexity
+
+Framework to create new components from bigger components:
+----------------------------------------------------------
+Suggestion - When in doubt - start with relatively big component and then split into smaller components as it becomes necessary 
+
+But if we already know we need a small and reusable component such as a button - we can simply create a small and reusable component - But otherwise we dont need to focus on reusability and complexity at the beginning 
+
+Logical separation - If the huge component contain pieces of content or layout that dont belong together then we might need a new component 
+
+Reusability - If it is possible to reuse part of the component and if there is a need to reuse it then we might need a new component 
+
+Single responsibility - If the component is doing too many different things or relying on too many props or if the code including JSX is more complex and confusing or if the component have too many pieces of state or effects - then we might need a new component 
+
+Some more general Guidelines:
+-----------------------------
+1. Be aware that creating new components creates a new abstraction - Abstractions have a cost because more abstractions requires switching back and forth between components - So try not to create new components too early 
+
+2. Name components according to whatt it does or what it displays - can have long meaningful component names 
+
+3. Never declare a new component inside of another component - but we can co-locate related components inside the same file and dont separate components into different files too early 
+
+All Apps will have components of different sizes and reusability - They will contain very small components that are necessary - and highly reusable and of very low complexity like buttons and most apps will have a few huge components like page component containing the complex layout of the entire app or the page - which is not meant to be reused 
+
+Small components are easily reusable while huge components are not reusable 
+
+And finally the apps might have components of all different sizes with different degrees of reusability, responsibility and complexity.
+
+Lecture: Component categories:
+------------------------------
+Most components naturally fall into one of three categories:
+
+Stateless/Presentational Components - Dont have any state, components that receive some props and simply present the received data or other content - Usually small and reusable
+
+Stateful Components - These components do have state - can still be reusable 
+
+Structural Components - Pages - layouts or screens of the app - often a result of composing many smaller components together - They can be huge and non reusable components - These components can also be small but they provide some sort of structure to the application 
+
+Lecture: Prop Drilling:
+-----------------------
+Prop Drilling means we need to pass some props through several nested child components to get that data in some deeply nested component - 
+
+Lecture: Component Composition:
+-------------------------------
+Using a component - inside another component - creates a big problem when it comes to reusability- those 2 components are deeply related to one another in JSX - So we cant use the Modal component to display some other message other than the Success component message that is nested within(so could be called as successModal cant use to display error msg) - to solve this we use component composition 
+
+Component composition - Here we can compose modal and success components together - that is modal component no longer includes a predefined component - but it accepts children with the children props - We simply pass the success component right into the modal and compose them together using children props - So we can easily reuse the Modal component - we can pass in Error component into Modal component to display an error message and compose these two components together 
+
+So component composition is combining different components using the children props (or explicitly defining components as props) - We use composition for 2 important situations - 
+1. When we want to create highly reusable and flexible components like modal window 
+2. To fix prop drilling problem (Great for creating layouts)
+
+This is possible because components dont need to know their children in advance - that allows us to create empty slots and use children props inside them to fill in with different components
+
+Lecture: Props as an API :
+-------------------------
+Any component is created by someone(building and defining the props of the component) and consumed by customer(uses the component by specifying value for the props) - we should think component props as the public APIs/public interface of the component - how much complexity of the component we should expose to the consumer of the API - Because component is just an abstraction of a part of UI and its associated logic - we should be strict in deciding how many props we are providing to configure that component - Too little props will make the component not flexible enough and might not be useful to the consumer - Too many props will make the component too hard to use and expose too much complexity to the consumer and leads to hard to write code 
+
+When deciding the public API for a component we should try to strick the right balance between too little and too many props that works best for both consumer and the creator - We can also provide default values for some props to make it easier
+
+With prop types we can basically specify - the types of value that we expect the consumer of the component to pass in for each prop value - type checking - react built in prop types 
+
+Section: Effects and Data Fetching:
+-----------------------------------
+Lecture: The Component lifecycle
+--------------------------------
+Actual component instance can go through the following lifecycle, 
+
+The lifecycle of a component encompasses the different phases that a specific component instance can go through over time,
+
+First phase - Component instance mounted which is also called the initial render - The component instance is rendered for the first time - fresh state and props are created for the component instance - This component instance can be re-rendered unlimited number of times - by state changes - or if the props it receives changes or if the parent re-renders - or when context changes 
+
+Re-Render phase is optional, some components are only mounted and then unmounted right away 
+
+Finally, when component instance is no longer needed then it is unmounted - the component instance is completely destroyed and removed along with its state and props - this can happen when users navigate to a new section of the app or when they close they app altogether - Ofcourse a new instance of the same component can be mounted later but this specific instance is unmounted.
+
+We can basically define code to be executed at these specific points in time - which is extremely useful and we do so by using useEffect hook 
+
+Lecture: First look at Effects:
+-------------------------------
+A side effect is any interaction between a React component and the world outside the component. We can also think it as a code, that actually does something. Eg, data fetching, setting up subscriptions, setting up timers, accessing DOM etc.
+
+So we need side effects all the time when we build react apps but not in render logic - But side effects can be inside event handlers (Triggered by events such as onClick, onSubmit etc) - However simply reacting to events is not enough for the application's need - in some situations we need to write code that automatically is executed as the component is rendered - this is when we can create a so called Effects using useEffect hook - So by creating an Effect we can basically write code that will run at different moments of component instance's lifecycle ( mount, re-render and unmount)
+
+Event Handlers - Executed when corresponding event happens - It reacts to certain event that has occurred in the UI - whenever possible use event handlers to create side effects - not to over use 'useEffect' hooks
+
+Effects - Executed after the component mounts (initial render) and after subsequent re-renders(exact moment at which this effect is executed depends upon its dependency array - this array is just one of the three parts that any effect can have - besides this we have the effect code itself and each effect can return a cleanup function - a function that will be called before component re-renders or unmounts) - The real reason why effects exists is not to run code at different points in the lifecycle but to keep a component syncronized with some external system.
+
+Lecture: Using an Async function:
+--------------------------------
+Effect callbacks are synchronous to prevent race conditions - they cant return a promise - so create another function and place the async function inside that.
+
+In React 18 - strict mode will call the effect function twice but only in development - so that react can identify if there are any problems with our effect 
+
+Lecture: useEffect dependency array:
+-----------------------------------
+By default, effects run after every render. We can prevent this by passing a dependency array into useEffect hook as a second argument - Without this array, React doesnt know when to run the effect, but if we do specify the effect dependencies by passing in a dependency array then the effect will be executed each time one of the dependencies changes. 
+
+Effect dependencies are those state variables and prop used inside the effect - The rule is that every state/prop used inside the effect must be included in the dependency array - or it will lead to stale closure bug 
+
+UseEffect is a Synchronization Mechanism:
+-----------------------------------------
+useEffect is like an event listener that is listening for one or more dependency to change. Whenever one of the dependency changes, it will execute the effect again. Essentially effects react to updates to the state and props that are used inside the effect because they are their effect dependencies. In a way the effects are reactive like state updates re-rendering the UI.
+
+Effects are used to keep a component syncronized with some external system/side effect- Component state/props is syncronized with the title of the document (external system) - synchronization works in only one way - useEffect is a synchronization Mechanism - synchronize the effects with the state of the application
+
+Synchronization and Lifecycle:
+------------------------------
+Whenever a dependency changes (state or props) - effect is executed again - and also component is re-rendered - effects and component lifecylce are deeply connected - so we can use dependency array to run effects when the component rendres or re-renders, in way useEffect hook is about synchronization and about component lifecycle. 
+
+useEffect(fn , [x,y,z]) - Effect synchronizes with x,y and z - the effect will run on initial render of the component and on every re-render triggered by updating x, y and z - if other piece of state is updated this particular effect is not executed
+
+useEffect(fn, []) - empty dependency array means the effect synchronizes with no state/props and therefore it will only run on mount/initial render 
+
+useEffect(fn) - no array at all then the effect will run on every render (usually bad practice) - Effect synchronizes with everything - every state/prop will be a effect dependency
+
+When are effects executed:
+-------------------------
+initial render of component instance (Mounting) - the result is committed to the DOM and DOM changes are painted to the screen by the browser - Effects are only executed after the browser painted the component instance on to the screen not immediately after render phase - thats why effects run asynchronously - the reason why effects work this way is because effects might contain long running processes such as fetching data - one important consequence is that if an effect sets state an second additional render will be required to display the UI correctly so dont over use effects.
+
+Layout effect - another type of effect - that is very rarely necessary - useLayoutEffect - The only difference between the effect and layout effect is that it is executed before the browser actually paints the new screen 
+
+Lecture : When are effects executed:
+-----------------------------------
+How to make the page title synchronize with the application even after the app is unmounted - we need to execute some code as the component unmounts - we can do so by returning a cleanup function from the effect - But this clean up function is also executed between re-renders
+
+Clean up function is an optional function that we can return from an effect - The clean up function will run on 2 different occasions,
+
+1. Before the effect is executed again to cleanup the results of the previous side effect
+2. Also runs right after the component instance has unmounted to reset the side effect that we created - if that is needed
+
+We have the dependency array to run effect whenever the component mounts/re-renders - with clean up function we have a way to run code whenever the component unmounts
+
+NOTE: We need a clean up function whenever the side effect keeps happening after the component has been re-rendered or unmounted 
+
+Example - if an effect executes a http request, and the component is re-rendered while the first request is still running - then a new second request would be fired off - this might create a bug called race condition - so therefore it is a good practice to cancel the request in a clean up function whenever the component re-renders/unmounts. (other examples are if we start a timer, we should stop the timer - if we add event listener we should remove the listener in the cleanup function)
+
+NOTE: Each effect should only do one thing! If we need to create multiple effects in our component just use multiple useEffect hooks - This not only makes each effect much easier to understand it also makes effects easier to clean up using a clean up function.
+
+Lecture: What are React hooks:
+-----------------------------
+React hooks are special built-in functions that allow us to hook into React internal Mechanism - hooks are basically apis that expose some internal React functionality such as,
+1. Creating and accessing state from the Fiber tree 
+2. Registering side effects in the Fiber tree as well
+
+Fiber tree is internal to React and not accessible at all - but using hooks like useState and useEffect we can work with the internal React Fiber tree
+
+Hooks also allow us to manually select and store DOM nodes, access context and many more. Hooks start with 'use' to distinguish between other regular functions - we can even create our own custom hooks which should also start with 'use' - custom hooks give the developers an easy way of reusing the non-visual logic(not related to UI)
+
+Now function components has the ability to own state and run side effects at different lifecycle points. React comes with almost 20 built in hooks,
+1. useState 
+2. useEffect
+3. useReducer
+4. useContext
+5. useRef
+6. useCallback
+7. useMemo
+8. useTransition
+9. useDeferredValue
+
+The Rules of hooks:
+-------------------
+1. hooks can only be called at the top level - Do not call hooks inside conditionals(if stmt), loops, nested functions inside components, or after an early return - this is because hooks only work if they are always called in the exact same order - this can only be ensured if hooks are called at the top level
+
+Hooks rely on call order: Why do hooks need to called in the same order on every render 
+-------------------------
+Linked list of used hooks are also maintained in corresponding Fiber - List is built based on the hooks call order - so conditionally creating hooks will destroy the linked list if the condition evaluates to false between re-renders - which will leave React unable to correctly track all the hooks used with in the function component - This is the reason why hooks need to be called in the same order on every render - we can ensure this by only calling hooks at the top level - order in which the hooks are called - order number uniquely identifies each hook - the values of easily associated with each hook with its call order - we dont assign name to each hook manually 
+
+2. hooks can only be called from React functions - so only call hooks from React function components or from custom hook but not from regualar functions or from class components
+
+These rules are automatically enforced by React's ESLint rules
+
+Lecture: More details of useState hook:
+---------------------------------------
+1. The initial values that we pass into the useState hook only really matters on the initial render - not re-calculated on re-renders
+
+2. State updates are asynchronous inside the event handler function - so only after executing the handler all the state updates are set (state updates are batched) - so we need to use call back function to update state based on its previous state to avoid the problem of stale state values
+
+3. Besides using a callback function to update state based on previous value - we can also use a callback function to initialize state 
+
+Lecture: Initializing state with a callback function (Lazy initial state)
+-------------------------------------------------------------------------
+1. Whenever the initial value of useState hook depends on some sort of computation we should always pass in a function without arguments that the React can execute on its initial render - we cant call a function directly inside useState we can only pass a function into useState that the React can call - Function must be pure and accept no arguments 
+
+Lecture: useRef React hook
+---------------------------
+With useRef hook we create Refs - 'ref' stands for reference - basically it can be imagined like a box into which we can put any data that we want to preserve between renders - In technical terms, when we use useRef hook React gives us an object with mutable '.current' property and then we can write any data into the current property and ofcourse read using current property and the current property value stays the same between multiple renders.
+
+Two big use cases for Ref:
+--------------------------
+1. We can use refs to create variables that stays the same between renders like preserving the previous state or storing the id of setTimeout function etc
+
+2. We can use refs to select and store DOM elements - important use case - DOM element is also a piece of data that we want to store and preserve across renders - so we can use refs for this usecase
+
+Refs are usually for data that is not rendered in the visual output of the component - refs only appear in event handlers or effects and not in JSX (if we need data that participates in the visual output of the component that is a good sign for state variable)
+
+Rule: DO NOT write or read .current property in render logic (like in states) - as that will create an undesirable side-effect
+
+State vs Refs: Refs are like state but with less power
+------------------------------------------------------
+1. State and Refs are persisted across renders (remembers value even after re-renders) 
+
+2. Updating state will cause the component to re-render while updating ref doesnt
+
+3. State is immutable but refs are mutable 
+
+4. States are updated asynchronously - which means we cant use the new state immediately after updating it - but with refs updates are not asynchronous - so we can read the new current property immediately after updating it - just like regular JS object
+
+NOTE: We should use state when we want to store data that should re-render the component and refs for data that should only be remembered by the component over time and never re-render it
+
+Lecture: What are custom hooks and when to create one?
+------------------------------------------------------
+Custom hooks are all about reusability - we can basically reuse a piece of UI or piece of Logic - If we want to reuse a piece of UI we can use component - If we need to reuse a logic - we need to first check if does that logic contains any hooks if no all we need is a regular function - but if the logic does contains any react hooks - we cant extract the logic into a regular function - instead we need to create a custom hook - they allow us reuse stateful logic (non visual logic/any logic that contains one or more react hooks) among multiple components.
+
+One hook should only have 1 purpose to make it resuable and portable (even across multiple projects)- we shouldnt put all the hooks of a component into a custom hook but we should make it reusable - there are lots of custom hooks library that we can download from npm and use in our projects
+
+Since custom hooks are made of regular react hooks - the rules of hooks still apply to them - it is just a JS function that can receive and return data which is different from components which can only receive props and return JSX. 
+
+Custom hooks must use one or more hooks - function name needs to start with the word 'use' to make React recognize this function as a hook - 
+
+1. Use custom hooks to reuse some part of our non visual logic 
+2. Simply extract huge part of our component into some custom hook - 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

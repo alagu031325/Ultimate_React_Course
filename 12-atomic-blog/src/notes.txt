@@ -1,0 +1,66 @@
+Lecture: Context API
+---------------------
+If we need to pass state into multiple deeply nested child components - good solution to prop drilling is to compose components in a better way - Component composition may not always solve this problem - Instead we need a solution to directly pass the state from parent component to deeply nested component - so we use the context API.
+
+Context api basically allows components everywhere in the tree to read state that a context shares - Context api is a system to pass data throughout the application without manually passing props down the tree - It allows to broadcast global state to the entire application (to all child components of a certain context)
+
+The first part of the context API is the Provider which is a special React component that gives all child components access to a so called value - and this Provider can sit everywhere in the component tree but it is common to place it at the very top. The value is the data that we want to make it available/ data that we want to broadcast through the Provider. This is usually one or more state variables and setter functions.
+
+Finally we have Consumers - which are all the components that read the context value that is passed into the Provider. So Consumers are the components that subscribe to the context so that they can read the value from the context and we can create as many consumers as we want for any context Provider.
+
+When the context value gets updated - the Provider will notify all the consumers (components that has subscribed to that exact context) about the value change and All those consumers/components will automatically be re-rendered - that is all the components that are reading the context value. This is a new way in which the component instances can be re-rendered.
+
+We can create as many context as we want and place it anywhere in the component tree. 
+
+Lecture: Advanced Pattern: A custom Provider and hook
+-----------------------------------------------------
+Custom Provider Component and custom hook - to use advanced patterns
+
+Lecture: Advanced State Management:
+-----------------------------------
+Types of state:
+---------------
+We can classify state in terms of state accessibility and state domain:
+
+State accessibility: 
+--------------------
+States can either be local or global state - local state is only needed by one or few components and it is only accessible inside the component in which it was defined in and may be in child components - while global state might be needed by many components in different positions in the tree and it is accessible to every single component in the application so it is the accessibility of the state variable that changes between local and global state
+
+NOTE: If this component was rendered twice, should a state update in one of them reflect in the other one - if answer is 'No' then it means local state - but if answer is 'Yes' then it means we need to use global state variable
+
+State Domain:
+-------------
+we can classify each piece of state as either remote state or UI state. 
+
+Remote state is all application data that is loaded from a remote server (API) - using an API - It is a state that resides on the server but loaded into the application. UI state on the other hand is basically everything else. Like currently selected theme, list filters and form inputs, open panel exact
+
+Remote state is fundamentally different from a UI state - Because we usually retrieve that data in an asynchronous way and it might need to be re-fetched and updated frequently - so in a large scale application the remote state should be cached, revalidated and so on.
+
+UI state on the other hand is usually synchronous and stored in the application and doesnt interact with any external server at all and it is very easy to handle. 
+
+Where to place the state variables:
+-----------------------------------
+1. Local state - then we simply place it in a local component using useState, useReducer or useRef hooks 
+
+2. Lifting state up to the parent component of the child components that needed that state - parent component is another state placement option 
+
+3. Global state - place the state in the contextAPI - and we can use this with useState or useReducer hooks to manage the state - Just note that context on its own is not the one who is managing the state - the state still needs to be managed by useState or useReducer hooks but we then use the context API to give all components in the tree to access to that state - Context API is best suited to manage UI state 
+
+4. Remote state - more efficient way of managing global state in general then we can opt for one of the many third party libraries that exist in the React Ecosystem - Redux, React Query or Zustand etc - some of this are suitable for global UI state or for global remote state 
+
+5. URL - yet another excellant place to store the global state which needs to be passed between pages or to make it easily sharable or book markable - we use React Router's params and query strings
+
+6. To store data inside user's browser we can use Local storage, session storage etc - this wont re-render any components but it is an application state.
+
+State Management Tool options:
+------------------------------
+
+1. Local UI state - useState, useReducer, useRef 
+
+2. Local Remote state - we can use simple fetch inside useEffect to load data from remote api and then store that data as state with useState or useReducer - this is a good idea in small applications - in bigger applications we usually treat all remote state as global state
+
+3. Global UI state - We can either use contextAPI with useState and useReducer is a great tool , we can also use one of the third party libraries such as Redux, React Router for more performance
+
+4. Global Remote state - We can either use contextAPI with useState and useReducer or we can use third party library like Redux or some highly specialized tools in handling remote state such as React Query, SWR or RTK Query which has built in mechanism for caching and automatic re-fetching in order to deal with asynchronous nature of the remote state 
+
+

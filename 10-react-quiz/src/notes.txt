@@ -1,0 +1,57 @@
+Lecture: useReducer Hook
+------------------------
+More advanced and more complex way of managing state instead of useState hook. useReducer hook works with a so called reducer function which is a pure function which will always take in the current state and an action as an argument and it will return the next state and with the initial value/state as second argument. The useReducer hook returns the current state and a dispatch function. This dispatch function is then used to update the state, by passing in an action(action contains type and optionally a payload to pass a value to reducer) and then calling the reducer function.
+
+NOTE: We use reducer when we have some more complex state to manage - not just one single value - usually the state will be an object
+
+Lecture: Managing state with useReducer:
+----------------------------------------
+As components and state updates become more complex - using useState to manage all states is not enough in certain situations.
+
+1. When components have a lot of state variables and state updates,spread across many event handlers all over the component, this can become hard to manage
+
+2. When multiple state updates need to happen at the same time (for example when we want to start a game, we might have to set the score to zero, set isplaying and start a timer)
+
+3. When updating one piece of state depends on one or multiple other pieces of state 
+
+In all the above situations, useReducer can be of great help 
+
+State with useReducer:
+----------------------
+1. useReducer is an alternative way of setting and managing state, ideal for complex state and related pieces of state
+
+2. We usually store related pieces of state in a state object that is returned from useReducer hook
+
+3. useReducer needs reducer function in order to work - this function contains all the logic related to updating the state(Moving all state updates from different event handlers to this one single function allows us to completely decouple state logic from component itself), like setState() function but with more powers
+
+4. reducer is a pure function(no side effects) that takes in current state and action and returns the next state. state is immutable in react - this means reducer is not allowed to mutate the state(no side effects) - so it always return a new state 
+
+5. action is an object that describes how to update state 
+
+6. useReducer will return a so called dispatch function to trigger state updates, by sending an action from event handler to the reducer function - React reducer method accumulate all actions into one single state over time.
+
+NOTE: we can create fake api using npm package called json server - "server": "json-server --watch data/questions.json --port 8000" - add this to the package.json file to run the server and we will have the endpoints with the property name - 'questions' and it retrieves the corresponding value - which we can then fetch it in our app - we can also add delay so that the api fectches data after that specified interval of time (-delay 500)
+
+Lecture: useState vs useReducer:
+--------------------------------
+useState:
+---------
+1. Ideal for single independent pieces of state(like numbers, strings, single array or simple objects, etc)
+2. Logic to update state is placed directly in event handlers or effects, spread all over component or even located in child component if we are using lifted state
+3. We dont dispatch any actions but we directly update state by calling setState function - this leaves state updates Imperative
+4. This hook is lot easier to understand and to use 
+
+useReducer:
+-----------
+1. Ideal for multiple pieces of state that are related and dependent on each other or when we have really complex state to handle - objects with many values and nested objects
+2. All state updating logic lives in one central place, which is in the reducer function and stays decoupled from components
+3. Whenever we need to update state we dispatch action to reducer function which knows how to perform state updates for different actions
+4. Reducers map state transitions to actions with well defined names - which makes them declarative state updates - this is really an amazing pattern - only downside is it can be bit more difficult to understand and implement
+
+When to use useReducer hook:
+----------------------------
+1. one piece of state - useState hook
+
+2. if we need more than 1 piece of state that are frequently updating together then useReducer hook
+
+3. if we need more than 1 piece of state - and if states not frequently updating together - then we need to check if over 3 or 4 pieces of related state, and whether that state even includes complex objects or if there are too many event handlers making the component too large and confusing ? - if yes then we can use useReducer hook or else we can use useState hook 

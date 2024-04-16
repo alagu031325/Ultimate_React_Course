@@ -1,0 +1,1 @@
+Assests contain stuffs that are directly imported into the JS code 

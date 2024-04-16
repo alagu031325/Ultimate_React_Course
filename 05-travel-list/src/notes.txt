@@ -1,0 +1,57 @@
+Section : Thinking in React - State Management
+----------------------------------------------
+Lecture: What is "Thinking in React"
+-----------------------------------
+1. We should know to work with react api as well as think in react - Thinking in terms of components and state transitions rather than element mutations - this helps to build applications in more structured way
+
+2. First step is to break the UI into components and establish how these components are related to one another(component tree) - we should think about reusability and composibility of components (Building components that can be nested inside each other promotes composability. This allows you to compose complex UI structures by combining simpler, smaller components.)
+3. Build a static version of the React app without interactivity
+
+---------------------------------------------------------
+Steps 4 and 5 are collectively called as state management - 
+---------------------------------------------------------
+4. Think about state - When to use state and where to place each piece of state - what type of state either local vs global
+5. Then finally establish the data flows through the application - accessing global state , one-way data flow and child to parent communication
+
+Lecture: Fundamentals of State Management 
+------------------------------------------
+To track data that changes over the lifecycle of the application we use pieces of state - like searchQuery, shopping cart, coupons, notifications, messages, language
+
+What is state management:
+-------------------------
+Deciding when to create new pieces of state, what types of state are necessary, where to place each piece of state and how data flows through the application 
+
+Types of state:
+---------------
+Local state - 1. State needed only by one or few components like child and sibling components  2. local state are defined in a component using useState hook and is accessible only in that component and in child components by passing via props 3. Always start with local state and move to global state only if you truely need it
+
+Global state - 1. State that many components might need access to 2. It is a shared state that is accessible to every component in the entire application 3. we can define global state using React context API or using external global state management library like Redux
+
+State: When and where do we need state?
+--------------------------------------
+When to create state:
+---------------------
+When we need to store some data we need to decide - will this data change at some point in time - if answer is "NO" then we can use Regular JS const variable - if answer is "YES" - Can it be computed/calculate from existing piece of state or props - if answer is "YES" derive the state - if answer is "NO" then we need think whether updating the state needs component re-rendering - if answer is "NO" - we can use "useRef" which persist data over time but doesnt re-render a component - if answer is "YES" then create new piece of state using "useState" function - and place it in the component that we are currently building.
+
+Where to place state:
+---------------------
+If the state variable that we created is only used by the current component then we can simply leave it in that component - If answer is "NO" if also needed by child component then pass it as props to the child component - If state is also needed by one or a few sibling components or even by the parent component of the current component then lift the state up to first common parent - If state variable is necessary all over the place in the component tree - then use the global state
+
+Lecture: Lifting state up 
+------------------------
+1. Data can only flow down to children component from parent and not sideways to siblings - so we need to lift up state to first common parent component (place state in parent component to both components that needs the piece of state) - by this we have successfully shared one piece of state with multiple components in different positions in the component tree
+
+2. How to update the state from child component since we cant mutate props as it lives in parent component - so we need to pass the setter fn also as a prop to the child component who needs to update the state - so we can use this fn to update the state that lives in parent component - This technique of passing setter function is known as child to parent communication (inverse data flow) - child updating parent state (data flowing up)
+
+Lecture: Updating an item: Complex immutable data operation
+-----------------------------------------------------------
+We pass in the setter function from parent component up till the chid component and then call the function to update the corresponding state in the parent component 
+
+Lecture: Derived state:
+-----------------------
+State that is computed from an existing piece of state or from props.
+
+States that are dependant on existing state if created separately using useState hook becomes problem - because we need keep them all in sync - and should update them together - this will also creates multiple re-renders for each state update which is unnecessary (Example is numberItems and totalPrice depends on cart, creating 3 different state variables will cause 3 re-renders - where only one is sufficient) - Instead we can derive from existing state and store them in regular variables to avoid unnecessary re-renders - so we achieve "Single source of truth" for this related data 
+
+
+
